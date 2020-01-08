@@ -1,5 +1,5 @@
 import pandas as pd
-from random import randrange, choice
+from random import randrange
 
 
 diagonal_list = [(0, 0), (0, 1), (0, 2),
@@ -30,21 +30,18 @@ def print_square(df):
             pass  # print('\n')
 
 
-def random_number(myrange, seq1, seq2):
-    num = choice(myrange)
-    print(myrange, num)
+def random_number(seq1, seq2):
+    num = randrange(1, 10)
     if (num in seq1) or (num in seq2):
-        myrange = myrange.remove(num)
-        return random_number(myrange, seq1, seq2)
+        return random_number(seq1, seq2)
     else:
         return num
 
 
 def sequence(l):
     seq = []
-    myrange = [x for x in range(1, 10)]
     for i in range(l):
-        r = random_number(myrange, seq, [0 for x in range(9)])
+        r = random_number(seq, [0 for x in range(9)])
         seq.append(r)
     return seq
 
@@ -71,8 +68,7 @@ def fill_diagonal():
 def fill_recursively(df, i, j):
     seq1 = list(df.iloc[i, :])
     seq2 = list(df.iloc[:, j])
-    myrange = [x for x in range(1, 10)]
-    num = random_number(myrange, seq1, seq2)
+    num = random_number(seq1, seq2)
     return num
 
 
