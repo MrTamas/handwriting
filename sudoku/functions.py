@@ -49,6 +49,10 @@ def check_contains(num, seq1, seq2):
     return (num in seq1) or (num in seq2)
 
 
+def check_contains2(num, seq1, seq2, seq3):
+    return (num in seq1) or (num in seq2) or (num in seq3)
+
+
 def sequence(l):
     seq = []
     for i in range(l):
@@ -92,21 +96,36 @@ def fill_rest(df):
     return df
 
 
+def get_from_square(df, dim):
+    seq = []
+    a, b, c, d = dim
+    for i in range(a, b):
+        for j in range(c, d):
+            seq.append(df.iloc[i, j])
+    return seq
+
+
 def fill_square(df, dim):
     options = [x for x in range(1, 10)]
-    for i in range(dim[0], dim[1]):
-        for j in range(dim[2], dim[3]):
+    a, b, c, d = dim
+    for i in range(a, b):
+        for j in range(c, d):
             check = True
+
+            seq1 = list(df.iloc[i, :])
+            seq2 = list(df.iloc[:, j])
+            seq3 = list(get_from_square(df, dim))
+            counter = 0
             op = options.copy()
-            while check:
-                seq1 = list(df.iloc[i, :])
-                seq2 = list(df.iloc[:, j])
+            while check and (counter < 5):
+                counter += 1
                 num = choice(op)
-                check = check_contains(num, seq1, seq2)
-                # print(seq1, seq2, check, num, op, options)
                 op.remove(num)
+                check = check_contains2(num, seq1, seq2, seq3)
+                print(seq1, seq2, check, num, op, options)
             df.iloc[i, j] = num
             options.remove(num)
+            print_square(df)
     return df
 
 
@@ -127,21 +146,28 @@ f = fill_rest(d)
 print_square(f)
 """
 
+
+def repeat(df, dim):
+    for i in range(500):
+        while True:
+            try:
+                df = fill_square(df, dim)
+            except IndexError:  # Replace Exception with something more specific.
+                continue
+            else:
+                break
+    return df
+
+
 def create_sudoku(counter):
     print(counter)
-    try:
-        a = fill_diagonal()
-        b = fill_square(a, [3, 6, 0, 3])
-        c = fill_square(b, [0, 3, 3, 6])
-        d = fill_square(c, [6, 8, 3, 6])
-        e = fill_square(d, [3, 6, 6, 8])
-        f = fill_square(e, [6, 8, 0, 3])
-        g = fill_square(f, [0, 3, 6, 8])
-        print_square(g)
-        print(counter)
-    except IndexError:
-        counter += 1
-        create_sudoku(counter)
-
+    a = fill_diagonal()
+    for i in [[3, 6, 0, 3], [0, 3, 3, 6], [6, 8, 3, 6], [3, 6, 6, 8], [6, 8, 0, 3], [0, 3, 6, 8]]:
+        a = repeat(a, i)
+    # print_square(g)
+    print(counter)
+    # except IndexError:
+    # return c
 
 create_sudoku(0)
+
